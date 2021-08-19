@@ -1,0 +1,13 @@
+{
+  "name": "molgen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "molgen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generateMolgen": "tsc && node molgen.js && prettier molgenGenerated --write && yarn copyFiles && rimraf molgenGenerated",
+    "copyFiles": "cpx \"molgenGenerated/*.tsx\" ../src/molgenGenerated"
+  },
+  "author": "",
+  "license": "ISC"
+}
