@@ -2,6 +2,7 @@ query getOneBookById($id: String!) {
     getBookById(id: $id) {
         title,
         authors {
+            id
             name
         }
     }

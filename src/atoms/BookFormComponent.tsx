@@ -21,16 +21,21 @@ export const BookFormComponent = (props: BookFormComponentProps) => {
     }
 
     useEffect(() => {
-        if (book !== null) {
-            console.log(book);
-            reset({ ...book as BookInput });
+        if (book !== null && book !== undefined) {
+            reset({
+                title: book.getBookById?.title,
+                authorId: book.getBookById?.authors[0]?.id
+            });
         } else {
-
             reset();
         }
     }, [book, reset]);
 
     return <Grid item xs={6}>
+        {
+            book !== null &&
+            <h4>Fetched book: {book?.getBookById?.title} </h4>
+        }
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
