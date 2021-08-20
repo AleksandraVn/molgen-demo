@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {BookInput, GetOneBookByIdQuery} from "../generated/types";
 import {Button, Grid, TextField} from "@material-ui/core";
-import {useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 
 export interface BookFormComponentProps {
     onSave: (data: BookInput) => void;
@@ -10,7 +10,7 @@ export interface BookFormComponentProps {
 
 export const BookFormComponent = (props: BookFormComponentProps) => {
 
-    const {reset, handleSubmit, register} = useForm<BookInput>();
+    const {reset, handleSubmit, control} = useForm<BookInput>();
     const {book, onSave} = props;
 
     const onSubmit = (input: BookInput) => {
@@ -23,8 +23,8 @@ export const BookFormComponent = (props: BookFormComponentProps) => {
     useEffect(() => {
         if (book !== null && book !== undefined) {
             reset({
-                title: book.getBookById?.title,
-                authorId: book.getBookById?.authors[0]?.id
+                title: book.getBookById?.title!,
+                authorId: book.getBookById?.authors[0]?.id!
             });
         } else {
             reset();
@@ -39,19 +39,35 @@ export const BookFormComponent = (props: BookFormComponentProps) => {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <TextField
-                        {...register('title')}
-                        id="title"
-                        label="Book title"
-                        defaultValue=""
+                    <Controller
+                        control={control}
+                        name="title"
+                        defaultValue={""}
+                        render={({field: {onChange, onBlur, value, ref}}) => (
+                            <TextField
+                                id="title"
+                                label="Book title"
+                                onChange={onChange}
+                                onBlur={onBlur}
+                                value={value}
+                            />
+                        )}
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
-                        {...register('authorId')}
-                        id="authorId"
-                        label="Author ID"
-                        defaultValue=""
+                    <Controller
+                        control={control}
+                        name="authorId"
+                        defaultValue={""}
+                        render={({field: {onChange, onBlur, value, ref}}) => (
+                            <TextField
+                                id="authorId"
+                                label="Author ID"
+                                onChange={onChange}
+                                onBlur={onBlur}
+                                value={value}
+                            />
+                        )}
                     />
                 </Grid>
                 <Grid item xs={12}>

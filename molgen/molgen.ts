@@ -83,4 +83,6 @@ molgenGenerate(
     ["../src/mutations/*.graphql", "../src/queries/*.graphql"],
     ["../src/hooks/*.ts"],
     "../src/generated/*.ts"
-);
+).catch(err => {
+    throw err
+});
