@@ -1,27 +1,32 @@
 import molgenGenerate, {Atom, Molecule} from "molgen";
-import BooksList from "../src/atoms/BooksList";
+import BooksList, {BooksListProps} from "../src/atoms/BooksList";
 import {
     useCreateBookMutation,
     useGetAllBooksQuery,
     useGetOneBookByIdQuery,
     useUpdateBookMutation
 } from "../src/generated/types";
-import BookFormComponent from "../src/atoms/BookFormComponent";
+import BookFormComponent, {BookFormComponentProps} from "../src/atoms/BookFormComponent";
 import {useGetBookIdHook} from "../src/hooks/useGetBookId.hook";
 import GridContainer from "../src/containers/GridContainer";
+import React from "react";
+import {AtomProperty} from "molgen/dist/internalDsl/metamodel";
 
+const createAtom = <TComponent  extends  React.FunctionComponent | ((props: any) => JSX.Element)>(component: TComponent, props: AtomProperty<Parameters<TComponent>[0]>[]): Atom<TComponent> =>({
 
-const booksListAtom: Atom = {
-    component: BooksList,
-    props: [
+    component,
+        props
+})
+
+const booksListAtom =
+    createAtom(BooksList, [
         {
             name: "books",
             input: useGetAllBooksQuery
         }
-    ]
-}
+    ]);
 
-const createBookAtom = {
+const createBookAtom : Atom< typeof BookFormComponent>= {
     component: BookFormComponent,
     props: [
         {
@@ -59,6 +64,13 @@ const updateBookAtom = {
     ]
 }
 
+type VarInput<TProps extends {}> = VarInputHook<TProps, any>|{type: "prop", name: keyof TProps}
+type VarInputHook<TProps extends {}, InputType extends ((options?: any)=>any) > =
+    {type: "hook", input: null |InputType , transform: (result: ReturnType<InputType>)=>any}
+
+const hookInput : VarInputHook<{id: number}, ()=>{id: number}> = {type: "hook",input: ()=>{return {id: 1}},transform: (data)=>data.id}
+const id : VarInput<{id: number}> = {type: "prop", name: "id"}
+
 export const molecules: Molecule[] = [
     {
         name: "CreateBookComponent",
@@ -78,7 +90,7 @@ export const molecules: Molecule[] = [
 
 molgenGenerate(
     molecules,
-    ["../src/atoms/*.tsx"],
+    ["../src/*/atoms/*.tsx"],
     ["../src/containers/*.tsx"],
     ["../src/mutations/*.graphql", "../src/queries/*.graphql"],
     ["../src/hooks/*.ts"],
